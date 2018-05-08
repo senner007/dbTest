@@ -14,7 +14,7 @@ namespace dbTest
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.CnnVal("MyLocalSQL")))
             {
-               var output = connection.Query<Student>($"select * from Students").ToList();
+               var output = connection.Query<Student>($"select * from Students where FirstName = '{ firstName }'").ToList();
                 return output;
             }
         }
