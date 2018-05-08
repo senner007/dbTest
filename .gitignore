@@ -6,7 +6,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-dbTest/App.config
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
