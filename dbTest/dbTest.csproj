@@ -55,9 +55,13 @@
     <Compile Include="dbTestForm.Designer.cs">
       <DependentUpon>dbTestForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="People\Employed.cs" />
+    <Compile Include="People\IPerson.cs" />
+    <Compile Include="People\Merged.cs" />
+    <Compile Include="People\Person.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Student.cs" />
+    <Compile Include="People\Student.cs" />
     <EmbeddedResource Include="dbTestForm.resx">
       <DependentUpon>dbTestForm.cs</DependentUpon>
     </EmbeddedResource>
