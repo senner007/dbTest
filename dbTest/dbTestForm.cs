@@ -25,21 +25,21 @@ namespace dbTest
             //    < add name="MyLocalSQL" connectionString="" providerName="System.Data.SqlClient" />
             //</connectionStrings>
         }
-        public List<Merged> GetLikeFirstName(string firstName)
+        public List<Merged> GetLikeFirstNameSortBy(string firstName, string sort)
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GetCnString("MyLocalSQL")))
             {
                 //var output = connection.Query<Merged>($"select distinct s.FirstName, s.Major, e.FirstName FROM students as s, employed as e").ToList();
                 return connection.Query<Merged>($"select Status, Tlf, FirstNAme, LastName, Age, Major, '' as Company, '' as Salary from students " +
-                                                      $"where FirstName LIKE '%{ firstName }%' " +
+                                                      $"where FirstName LIKE '%{ firstName }%'" +
                                                       $"UNION " +
                                                       $"select Status, Tlf, FirstName, LastName, Age, '' as Major, Company, Salary from employed " +
-                                                      $"where FirstName LIKE '%{ firstName }%'").ToList();
+                                                      $"where FirstName LIKE '%{ firstName }%' ORDER BY " + sort).ToList();
 
             }
         }
 
-        public List<Merged> GetLikeAge(uint age)
+        public List<Merged> GetLikeAgeSortBy(uint age, string sort)
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GetCnString("MyLocalSQL")))
             {
@@ -48,12 +48,12 @@ namespace dbTest
                                                       $"where Age LIKE '%{ age }%' " +
                                                       $"UNION " +
                                                       $"select Status, Tlf, FirstName, LastName, Age, '' as Major, Company, Salary from employed " +
-                                                      $"where Age LIKE '%{ age }%'").ToList();
+                                                      $"where Age LIKE '%{ age }%' ORDER BY " + sort).ToList();
 
             }
         }
 
-        List<Merged> students = new List<Merged>();
+        List<Merged> merged = new List<Merged>();
 
         public dbTestForm()
         {
@@ -77,21 +77,14 @@ namespace dbTest
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            students = GetLikeFirstName(textBox1.Text); // søg i tekstboks - case insensitive
-            dataGridView1.DataSource = students; // indsæt liste
-        }
-
-        private void dbTestForm_Load(object sender, EventArgs e)
-        {
-
+            dataGridView1.DataSource = GetLikeFirstNameSortBy(textBox1.Text, "LastName"); // søg i tekstboks - case insensitive; // indsæt liste
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (UInt32.TryParse(textBox2.Text, out uint number))
                 Console.WriteLine("hello from number");
-                students = GetLikeAge(number); // søg i tekstboks - case insensitive
-                dataGridView1.DataSource = students; // indsæt liste
+                dataGridView1.DataSource = GetLikeAgeSortBy(number, "Age"); // søg i tekstboks - case insensitive
         }
 
     }  
