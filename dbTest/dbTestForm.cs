@@ -10,11 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dapper; // right click references, manage NuGet - install
-
+using dbTest.People;
 
 namespace dbTest
 {
-    
+
     public partial class dbTestForm : Form
     {
         public string GetCnString(string name)
@@ -24,33 +24,51 @@ namespace dbTest
             // <connectionStrings>
             //    < add name="MyLocalSQL" connectionString="" providerName="System.Data.SqlClient" />
             //</connectionStrings>
-
-
         }
-        public List<Student> GetPeople(string firstName)
+        public List<Merged> GetLikeFirstName(string firstName)
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GetCnString("MyLocalSQL")))
             {
-                var output = connection.Query<Student>($"select * from Students where FirstName = '{ firstName }'").ToList();
-                return output;
+                //var output = connection.Query<Merged>($"select distinct s.FirstName, s.Major, e.FirstName FROM students as s, employed as e").ToList();
+                return connection.Query<Merged>($"select Status, Tlf, FirstNAme, LastName, Age, Major, '' as Company, '' as Salary from students " +
+                                                      $"where FirstName LIKE '%{ firstName }%' " +
+                                                      $"UNION " +
+                                                      $"select Status, Tlf, FirstName, LastName, Age, '' as Major, Company, Salary from employed " +
+                                                      $"where FirstName LIKE '%{ firstName }%'").ToList();
+
             }
         }
 
-        List<Student> students = new List<Student>();
+        public List<Merged> GetLikeAge(uint age)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GetCnString("MyLocalSQL")))
+            {
+                //var output = connection.Query<Merged>($"select distinct s.FirstName, s.Major, e.FirstName FROM students as s, employed as e").ToList();
+                return  connection.Query<Merged>($"select Status, Tlf, FirstNAme, LastName, Age, Major, '' as Company, '' as Salary from students " +
+                                                      $"where Age LIKE '%{ age }%' " +
+                                                      $"UNION " +
+                                                      $"select Status, Tlf, FirstName, LastName, Age, '' as Major, Company, Salary from employed " +
+                                                      $"where Age LIKE '%{ age }%'").ToList();
+
+            }
+        }
+
+        List<Merged> students = new List<Merged>();
 
         public dbTestForm()
         {
             //Skjul comuterens navn ved at indsætte dette i app.config connectionString 
             //Åbn  People table i cnstring
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var cnStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");        
-            cnStringsSection.ConnectionStrings["MyLocalSQL"].ConnectionString = 
+            var cnStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
+            cnStringsSection.ConnectionStrings["MyLocalSQL"].ConnectionString =
                 "Data Source=" + Environment.MachineName + " \\SQLEXPRESS;Initial Catalog=People;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             config.Save();
             ConfigurationManager.RefreshSection("connectionStrings");
 
             InitializeComponent(); // init form
             AllocConsole(); // console output
+            this.ActiveControl = textBox1;
 
         }
         [DllImport("kernel32.dll", SetLastError = true)] // Console output
@@ -59,22 +77,36 @@ namespace dbTest
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            students = GetPeople(textBox1.Text); // søg i tekstboks - case insensitive
+            students = GetLikeFirstName(textBox1.Text); // søg i tekstboks - case insensitive
             dataGridView1.DataSource = students; // indsæt liste
         }
 
-        //use People;
+        private void dbTestForm_Load(object sender, EventArgs e)
+        {
 
-        //Drop Table students;
+        }
 
-        //CREATE TABLE students(
-        //    Tlf int not null PRIMARY KEY,
-        //    FirstName varchar (50)
-        //);
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (UInt32.TryParse(textBox2.Text, out uint number))
+                Console.WriteLine("hello from number");
+                students = GetLikeAge(number); // søg i tekstboks - case insensitive
+                dataGridView1.DataSource = students; // indsæt liste
+        }
 
-        //INSERT INTO students VALUES
-        //(11111111, 'Douglas Obi-Wan Crockford'),
-        //(22222222, 'Thomas A. Anderson');
-        //(33333333, 'John  Resig');
-    }
+    }  
 }
+
+
+
+//INSERT INTO[dbo].[employed]
+//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(11111111, N'Douglas', N'Crockford', 63, N'Employed', N'Yahoo', 1000)
+//INSERT INTO[dbo].[employed]
+//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(22222222, N'Thomas', N'A. Anderson', 53, N'Employed', N'Hacking the Matrix', 100000)
+//INSERT INTO[dbo].[employed]
+//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(33333333, N'John', N'Resig', 34, N'Employed', N'Javascript', 50000000)
+//----------------------------------------------------------//
+//INSERT INTO[dbo].[students]
+//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Major]) VALUES(44444444, N'John', N'Doe', 20, N'Student', N'Computer Science 101')
+//INSERT INTO[dbo].[students]
+//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Major]) VALUES(55555555, N'Jane', N'Doe', 21, N'Student', N'Computer Science 201')
