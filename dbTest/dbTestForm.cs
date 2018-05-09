@@ -99,13 +99,19 @@ namespace dbTest
 
 
 
+
 //INSERT INTO[dbo].[employed]
-//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(11111111, N'Douglas', N'Crockford', 63, N'Employed', N'Yahoo', 1000)
+//([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(11111111, N'Douglas', N'Crockford', 63, N'Employed', N'Yahoo', 1000)
 //INSERT INTO[dbo].[employed]
-//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(22222222, N'Thomas', N'A. Anderson', 53, N'Employed', N'Hacking the Matrix', 100000)
+//([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(22222222, N'Thomas', N'A. Anderson', 53, N'Employed', N'', 100000)
 //INSERT INTO[dbo].[employed]
-//        ([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(33333333, N'John', N'Resig', 34, N'Employed', N'Javascript', 50000000)
-//----------------------------------------------------------//
+//([Tlf], [FirstName], [LastName], [Age], [Status], [Company], [Salary]) VALUES(33333333, N'John', N'Resig', 34, N'Employed', N'', 50000000)
+
+/*
+ * 
+ * 
+ */
+
 //INSERT INTO[dbo].[students]
 //        ([Tlf], [FirstName], [LastName], [Age], [Status], [Major]) VALUES(44444444, N'John', N'Doe', 20, N'Student', N'Computer Science 101')
 //INSERT INTO[dbo].[students]
